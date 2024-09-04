@@ -27,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.room.Room
 import com.example.ap2project.database.PrioridadDb
 import com.example.ap2project.ui.theme.Ap2ProjectTheme
@@ -156,7 +155,7 @@ class MainActivity : ComponentActivity() {
                                     errorMessage = when {
                                         descripcion.isBlank() -> "El campo descripción es necesario"
                                         newDiasCompromiso == null -> "El campo Días de Compromiso es necesario"
-                                        newDiasCompromiso > 31 || newDiasCompromiso < 1 -> "Digite un rango entre 1 y 31"
+                                        newDiasCompromiso > 31 || newDiasCompromiso < 1 -> "Digite un número entre 1 y 31"
                                         descripcionExiste != null -> "Esta descripción ya existe"
                                         else -> ""
                                     }
@@ -253,11 +252,5 @@ class MainActivity : ComponentActivity() {
         return existe
     }
 
-    @Preview(showBackground = true, showSystemUi = true)
-    @Composable
-    fun PrioridadScreenPreview() {
-        Ap2ProjectTheme {
-            PrioridadScreen()
-        }
-    }
+
 }
