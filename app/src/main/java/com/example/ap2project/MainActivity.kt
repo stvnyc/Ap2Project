@@ -150,8 +150,8 @@ class MainActivity : ComponentActivity() {
                             OutlinedButton(
                                 onClick = {
                                     val newDiasCompromiso = diasCompromiso.toIntOrNull()
-                                    val descripcionExiste =
-                                        runBlocking { findByDescription(descripcion) }
+                                    scope.launch {
+                                    val descripcionExiste = findByDescription(descripcion)
                                     errorMessage = when {
                                         descripcion.isBlank() -> "El campo descripción es necesario"
                                         newDiasCompromiso == null -> "El campo Días de Compromiso es necesario"
@@ -160,7 +160,7 @@ class MainActivity : ComponentActivity() {
                                         else -> ""
                                     }
                                     if (errorMessage?.isEmpty() == true) {
-                                        scope.launch {
+
                                             savePrioridad(
                                                 PrioridadEntity(
                                                     descripcion = descripcion,
