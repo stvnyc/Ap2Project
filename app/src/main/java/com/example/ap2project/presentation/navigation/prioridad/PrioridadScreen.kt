@@ -144,6 +144,7 @@ fun PrioridadScreen(
                                     descripcionExiste != null -> "Esta descripción ya existe"
                                     else -> ""
                                 }
+
                                 if (message.isNullOrEmpty()) {
                                     if (prioridadId > 0) {
                                         prioridadDb.prioridadDao().update(
@@ -154,18 +155,18 @@ fun PrioridadScreen(
                                             )
                                         )
                                         message = "Editado!"
-                                    }
-                                } else {
-                                    prioridadDb.prioridadDao().save(
-                                        PrioridadEntity(
-                                            descripcion = descripcion,
-                                            diasCompromiso = newDiasCompromiso
+                                    } else {
+                                        prioridadDb.prioridadDao().save(
+                                            PrioridadEntity(
+                                                descripcion = descripcion,
+                                                diasCompromiso = newDiasCompromiso
+                                            )
                                         )
-                                    )
-                                    message = "Guardado!"
+                                        message = "Guardado!"
+                                    }
+                                    descripcion = ""
+                                    diasCompromiso = ""
                                 }
-                                descripcion = ""
-                                diasCompromiso = ""
                             }
                         }
                     ) {
