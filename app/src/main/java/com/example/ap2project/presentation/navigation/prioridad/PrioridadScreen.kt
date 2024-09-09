@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.FloatingActionButton
@@ -141,10 +142,10 @@ fun PrioridadScreen(
                                     descripcion.isBlank() -> "El campo descripción es necesario"
                                     newDiasCompromiso == null -> "El campo Días de Compromiso es necesario"
                                     newDiasCompromiso > 31 || newDiasCompromiso < 1 -> "Digite un número entre 1 y 31"
-                                    descripcionExiste != null -> "Esta descripción ya existe"
+                                    descripcionExiste != null && (prioridadId <= 0 ||
+                                            descripcionExiste.prioridadId != prioridadId) -> "Esta descripción ya existe"
                                     else -> ""
                                 }
-
                                 if (message.isNullOrEmpty()) {
                                     if (prioridadId > 0) {
                                         prioridadDb.prioridadDao().update(
@@ -171,11 +172,12 @@ fun PrioridadScreen(
                         }
                     ) {
                         Icon(
-                            imageVector = Icons.Default.AddCircle,
+                            imageVector = Icons.Default.Check,
                             contentDescription = null
                         )
                         Text(text = if (prioridadId > 0) "Actualizar" else "Guardar")
                     }
+
                     if (prioridadId > 0){
                         OutlinedButton(
                             onClick = {
