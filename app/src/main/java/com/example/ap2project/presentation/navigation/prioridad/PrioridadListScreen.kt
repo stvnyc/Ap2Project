@@ -59,12 +59,12 @@ fun PrioridadListScreen(
                 )
                 Text(
                     "Descripción",
-                    modifier = Modifier.weight(2.5f),
+                    modifier = Modifier.weight(1.5f),
                     fontSize = 20.sp
                 )
                 Text(
-                    "Días de Compromiso",
-                    modifier = Modifier.weight(2.5f),
+                    "Días",
+                    modifier = Modifier.weight(0.5f),
                     fontSize = 20.sp
                 )
             }
@@ -101,12 +101,12 @@ private fun PrioridadRow(
             fontSize = 18.sp
         )
         Text(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(3f),
             text = it.descripcion,
             fontSize = 18.sp
         )
         Text(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(0.5f),
             text = it.diasCompromiso.toString(),
             fontSize = 18.sp
         )
