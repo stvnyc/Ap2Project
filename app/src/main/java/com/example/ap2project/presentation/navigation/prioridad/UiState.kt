@@ -1,6 +1,5 @@
 package com.example.ap2project.presentation.navigation.prioridad
 
-import android.os.Message
 import com.example.ap2project.Data.dao.entities.PrioridadEntity
 
 data class UiState(
