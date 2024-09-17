@@ -1,9 +1,9 @@
-package com.example.ap2project.database
+package com.example.ap2project.Data.dao.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.example.ap2project.dao.PrioridadDao
-import com.example.ap2project.entities.PrioridadEntity
+import com.example.ap2project.Data.dao.dao.PrioridadDao
+import com.example.ap2project.Data.dao.entities.PrioridadEntity
 
 @Database(
     entities = [

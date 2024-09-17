@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
-import com.example.ap2project.database.PrioridadDb
+import com.example.ap2project.Data.dao.database.PrioridadDb
 import com.example.ap2project.presentation.navigation.PrioridadNavHost
 import com.example.ap2project.ui.theme.Ap2ProjectTheme
 

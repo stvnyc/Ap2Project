@@ -2,7 +2,7 @@ package com.example.ap2project.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.ap2project.database.PrioridadDb
+import com.example.ap2project.Data.dao.database.PrioridadDb
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

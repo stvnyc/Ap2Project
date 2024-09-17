@@ -19,7 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ap2project.entities.PrioridadEntity
+import com.example.ap2project.Data.dao.entities.PrioridadEntity
 
 @Composable
 fun PrioridadListScreen(

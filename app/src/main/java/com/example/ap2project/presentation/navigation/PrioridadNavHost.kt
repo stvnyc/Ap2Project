@@ -9,7 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.example.ap2project.database.PrioridadDb
+import com.example.ap2project.Data.dao.database.PrioridadDb
 import com.example.ap2project.presentation.navigation.prioridad.PrioridadListScreen
 import com.example.ap2project.presentation.navigation.prioridad.PrioridadScreen
 

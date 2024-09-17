@@ -30,8 +30,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.ap2project.database.PrioridadDb
-import com.example.ap2project.entities.PrioridadEntity
+import com.example.ap2project.Data.dao.database.PrioridadDb
+import com.example.ap2project.Data.dao.entities.PrioridadEntity
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
