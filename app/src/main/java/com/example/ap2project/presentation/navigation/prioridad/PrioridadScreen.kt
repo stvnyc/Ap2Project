@@ -30,6 +30,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ap2project.Data.dao.database.PrioridadDb
 import com.example.ap2project.Data.dao.entities.PrioridadEntity
 import kotlinx.coroutines.launch
@@ -37,9 +39,35 @@ import kotlinx.coroutines.runBlocking
 
 @Composable
 fun PrioridadScreen(
+    viewModel: PrioridadViewModel = hiltViewModel(),
+    goBack: () -> Unit,
     onGoToPrioridadListScreen: () -> Unit,
-    prioridadDb: PrioridadDb,
     prioridadId: Int
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    PrioridadBodyScreen(
+        uiState = uiState,
+
+        onDescripcionChange = viewModel::onDescripcionChange,
+        onDiasCompromisoChange = viewModel::onDiasCompromisoChange,
+        savePrioridad = viewModel::save,
+        deletePrioridad = viewModel::delete,
+        nuevaPrioridad = viewModel::nuevo,
+        goBack = goBack,
+        onGoToPrioridadListScreen = onGoToPrioridadListScreen
+    )
+}
+
+@Composable
+fun PrioridadBodyScreen(
+    uiState: UiState,
+    onDescripcionChange: (String) -> Unit,
+    onDiasCompromisoChange: (String) -> Unit,
+    savePrioridad: () -> Unit,
+    deletePrioridad: () -> Unit,
+    nuevaPrioridad: () -> Unit,
+    onGoToPrioridadListScreen: () -> Unit,
+    goBack: () -> Unit
 ) {
     var descripcion by remember { mutableStateOf("") }
     var diasCompromiso by remember { mutableStateOf("") }
@@ -80,21 +108,21 @@ fun PrioridadScreen(
             ) {
                 OutlinedTextField(
                     label = { Text(text = "Descripción") },
-                    value = descripcion,
-                    onValueChange = { descripcion = it },
+                    value = uiState.descripcion,
+                    onValueChange = onDescripcionChange,
                     modifier = Modifier.fillMaxWidth(),
                 )
 
                 OutlinedTextField(
                     label = { Text(text = "Días Compromiso") },
-                    value = diasCompromiso,
-                    onValueChange = { diasCompromiso = it },
+                    value = uiState.diasCompromiso?.toString() ?: "",
+                    onValueChange = onDescripcionChange,
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                 )
 
                 Text(
-                    text = message.orEmpty(),
+                    text = uiState.errorMessage ?: "",
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier
                         .padding(5.dp)
@@ -106,24 +134,8 @@ fun PrioridadScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    LaunchedEffect(prioridadId) {
-                        if (prioridadId > 0) {
-                            val prioridadExiste = runBlocking {
-                                prioridadDb.prioridadDao().find(prioridadId)
-                            }
-                            if (prioridadExiste != null) {
-                                descripcion = prioridadExiste.descripcion
-                                diasCompromiso = prioridadExiste.diasCompromiso.toString()
-                            }
-                        }
-                    }
-
                     OutlinedButton(
-                        onClick = {
-                            descripcion = ""
-                            diasCompromiso = ""
-                            message = null
-                        }
+                        onClick = nuevaPrioridad
                     ) {
                         Icon(
                             imageVector = Icons.Default.AddCircle,
@@ -132,76 +144,17 @@ fun PrioridadScreen(
                         Text(text = "Nuevo")
                     }
 
-                    val scope = rememberCoroutineScope()
-                    val newDiasCompromiso = diasCompromiso.toIntOrNull()
                     OutlinedButton(
                         onClick = {
-                            scope.launch {
-                                val descripcionExiste = prioridadDb.prioridadDao().findByDescription(descripcion)
-                                message = when {
-                                    descripcion.isBlank() -> "El campo descripción es necesario"
-                                    newDiasCompromiso == null -> "El campo Días de Compromiso es necesario"
-                                    newDiasCompromiso > 31 || newDiasCompromiso < 1 -> "Digite un número entre 1 y 31"
-                                    descripcionExiste != null && (prioridadId <= 0 ||
-                                            descripcionExiste.prioridadId != prioridadId) -> "Esta descripción ya existe"
-                                    else -> ""
-                                }
-                                if (message.isNullOrEmpty()) {
-                                    if (prioridadId > 0) {
-                                        prioridadDb.prioridadDao().update(
-                                            PrioridadEntity(
-                                                prioridadId = prioridadId,
-                                                descripcion = descripcion,
-                                                diasCompromiso = newDiasCompromiso
-                                            )
-                                        )
-                                        message = "Editado!"
-                                    } else {
-                                        prioridadDb.prioridadDao().save(
-                                            PrioridadEntity(
-                                                descripcion = descripcion,
-                                                diasCompromiso = newDiasCompromiso
-                                            )
-                                        )
-                                        message = "Guardado!"
-                                    }
-                                    descripcion = ""
-                                    diasCompromiso = ""
-                                }
-                            }
+                            savePrioridad()
+                            goBack()
                         }
                     ) {
                         Icon(
                             imageVector = Icons.Default.Check,
                             contentDescription = null
                         )
-                        Text(text = if (prioridadId > 0) "Actualizar" else "Guardar")
-                    }
-
-                    if (prioridadId > 0){
-                        OutlinedButton(
-                            onClick = {
-                                scope.launch{
-                                    prioridadDb.prioridadDao().delete(
-                                        PrioridadEntity(
-                                            prioridadId = prioridadId,
-                                            descripcion = descripcion,
-                                            diasCompromiso = newDiasCompromiso
-                                        )
-                                    )
-                                }
-                                descripcion = ""
-                                diasCompromiso = ""
-                                message = "Eliminado!"
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Delete,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.error
-                            )
-                            Text(text = "Eliminar", color = MaterialTheme.colorScheme.error)
-                        }
+                        Text(text = "Guardar")
                     }
                 }
             }

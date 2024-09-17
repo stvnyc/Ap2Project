@@ -15,23 +15,14 @@ import com.example.ap2project.presentation.navigation.prioridad.PrioridadScreen
 
 @Composable
 fun PrioridadNavHost(
-    navHostController: NavHostController,
-    prioridadDb: PrioridadDb
+    navHostController: NavHostController
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val prioridadList by prioridadDb.prioridadDao().getall()
-        .collectAsStateWithLifecycle(
-            initialValue = emptyList(),
-            lifecycleOwner = lifecycleOwner,
-            minActiveState = Lifecycle.State.STARTED
-        )
     NavHost(
         navController = navHostController,
         startDestination = Screen.PrioridadList
     ) {
         composable<Screen.PrioridadList> {
             PrioridadListScreen(
-                prioridadList = prioridadList,
                 createPrioridad = {navHostController.navigate(Screen.Prioridad(0))},
                 goToPrioridadScreen = {navHostController.navigate(Screen.Prioridad(it))}
             )
@@ -40,8 +31,10 @@ fun PrioridadNavHost(
             val prioridadId = it.toRoute<Screen.Prioridad>().prioridadId
             PrioridadScreen(
                 onGoToPrioridadListScreen = { navHostController.navigateUp() },
-                prioridadDb,
-                prioridadId
+                goBack = {
+                    navHostController.navigateUp()
+                },
+                prioridadId = prioridadId
             )
         }
     }

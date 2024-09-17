@@ -15,17 +15,34 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.ap2project.Data.dao.entities.PrioridadEntity
 
 @Composable
 fun PrioridadListScreen(
-    prioridadList: List<PrioridadEntity>,
-    createPrioridad: () -> Unit,
-    goToPrioridadScreen: (Int) -> Unit
+    viewModel: PrioridadViewModel = hiltViewModel(),
+    goToPrioridadScreen: (Int) -> Unit,
+    createPrioridad: () -> Unit
+){
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    PrioridadBodyListScreen(
+        uiState,
+        goToPrioridadScreen,
+        createPrioridad
+    )
+}
+
+@Composable
+fun PrioridadBodyListScreen(
+    uiState: UiState,
+    goToPrioridadScreen: (Int) -> Unit,
+    createPrioridad: () -> Unit
 ) {
     Scaffold(
         floatingActionButton = {
@@ -74,7 +91,7 @@ fun PrioridadListScreen(
                     .fillMaxSize()
                     .padding(horizontal = 14.dp)
             ) {
-                items(prioridadList){
+                items(uiState.prioridades){
                     PrioridadRow(it,goToPrioridadScreen)
                 }
             }
