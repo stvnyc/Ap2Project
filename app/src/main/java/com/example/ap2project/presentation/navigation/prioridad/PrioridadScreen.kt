@@ -10,7 +10,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.ArrowBack
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -20,11 +19,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,15 +29,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.ap2project.Data.dao.database.PrioridadDb
-import com.example.ap2project.Data.dao.entities.PrioridadEntity
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 @Composable
 fun PrioridadScreen(
     viewModel: PrioridadViewModel = hiltViewModel(),
-    goBack: () -> Unit,
     onGoToPrioridadListScreen: () -> Unit,
     prioridadId: Int
 ) {
@@ -51,9 +43,7 @@ fun PrioridadScreen(
         onDescripcionChange = viewModel::onDescripcionChange,
         onDiasCompromisoChange = viewModel::onDiasCompromisoChange,
         savePrioridad = viewModel::save,
-        deletePrioridad = viewModel::delete,
         nuevaPrioridad = viewModel::nuevo,
-        goBack = goBack,
         onGoToPrioridadListScreen = onGoToPrioridadListScreen
     )
 }
@@ -64,10 +54,8 @@ fun PrioridadBodyScreen(
     onDescripcionChange: (String) -> Unit,
     onDiasCompromisoChange: (String) -> Unit,
     savePrioridad: () -> Unit,
-    deletePrioridad: () -> Unit,
     nuevaPrioridad: () -> Unit,
     onGoToPrioridadListScreen: () -> Unit,
-    goBack: () -> Unit
 ) {
     var descripcion by remember { mutableStateOf("") }
     var diasCompromiso by remember { mutableStateOf("") }
@@ -147,7 +135,6 @@ fun PrioridadBodyScreen(
                     OutlinedButton(
                         onClick = {
                             savePrioridad()
-                            goBack()
                         }
                     ) {
                         Icon(

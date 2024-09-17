@@ -1,15 +1,10 @@
 package com.example.ap2project.presentation.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import com.example.ap2project.Data.dao.database.PrioridadDb
 import com.example.ap2project.presentation.navigation.prioridad.PrioridadListScreen
 import com.example.ap2project.presentation.navigation.prioridad.PrioridadScreen
 
@@ -31,9 +26,6 @@ fun PrioridadNavHost(
             val prioridadId = it.toRoute<Screen.Prioridad>().prioridadId
             PrioridadScreen(
                 onGoToPrioridadListScreen = { navHostController.navigateUp() },
-                goBack = {
-                    navHostController.navigateUp()
-                },
                 prioridadId = prioridadId
             )
         }
