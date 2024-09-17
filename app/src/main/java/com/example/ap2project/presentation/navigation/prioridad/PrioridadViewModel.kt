@@ -2,6 +2,7 @@ package com.example.ap2project.presentation.navigation.prioridad
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.ap2project.Data.dao.entities.PrioridadEntity
 import com.example.ap2project.Data.repository.PrioridadRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,8 +24,9 @@ class PrioridadViewModel @Inject constructor(
 
     fun save() {
         viewModelScope.launch {
-            if (_uiState.value.descripcion.isBlank() &&
-                _uiState.value.diasCompromiso.toString().isBlank()
+            if (_uiState.value.descripcion.isBlank() ||
+                _uiState.value.diasCompromiso == null ||
+                _uiState.value.diasCompromiso!! < 1
             ) {
                 _uiState.update {
                     it.copy(errorMessage = "Todos los campos son requeridos")
@@ -45,9 +47,9 @@ class PrioridadViewModel @Inject constructor(
         }
     }
 
-    fun delete() {
+    fun delete(prioridad: PrioridadEntity) {
         viewModelScope.launch {
-            prioridadRepository.delete(_uiState.value.toEntity())
+            prioridadRepository.delete(prioridad)
         }
     }
 
