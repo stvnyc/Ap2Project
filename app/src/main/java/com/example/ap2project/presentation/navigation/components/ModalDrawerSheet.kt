@@ -7,10 +7,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.*
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -68,6 +72,24 @@ fun ModalDrawerSheet(
                     drawerState.close()
                 }
                 navHostController.navigate(Screen.PrioridadList) {
+                    popUpTo(0)
+                }
+            },
+        )
+        NavigationDrawerItem(
+            label = { Text(text = "Tickets") },
+            selected = false,
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Email,
+                    contentDescription = null
+                )
+            },
+            onClick = {
+                coroutineScope.launch {
+                    drawerState.close()
+                }
+                navHostController.navigate(Screen.TicketListScreen) {
                     popUpTo(0)
                 }
             },
