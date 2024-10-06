@@ -19,10 +19,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
@@ -36,15 +34,20 @@ fun PrioridadScreen(
     onGoToPrioridadListScreen: () -> Unit,
     prioridadId: Int
 ) {
+
+    LaunchedEffect(prioridadId) {
+        viewModel.selectedPrioridad(prioridadId)
+    }
+
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     PrioridadBodyScreen(
         uiState = uiState,
-
         onDescripcionChange = viewModel::onDescripcionChange,
         onDiasCompromisoChange = viewModel::onDiasCompromisoChange,
         savePrioridad = viewModel::save,
         nuevaPrioridad = viewModel::nuevo,
-        onGoToPrioridadListScreen = onGoToPrioridadListScreen
+        onGoToPrioridadListScreen = onGoToPrioridadListScreen,
+        prioridadId = prioridadId
     )
 }
 
@@ -56,10 +59,8 @@ fun PrioridadBodyScreen(
     savePrioridad: () -> Unit,
     nuevaPrioridad: () -> Unit,
     onGoToPrioridadListScreen: () -> Unit,
+    prioridadId: Int
 ) {
-    var descripcion by remember { mutableStateOf("") }
-    var diasCompromiso by remember { mutableStateOf("") }
-    var message: String? by remember { mutableStateOf("") }
 
     Scaffold(
         floatingActionButton = {
@@ -104,7 +105,7 @@ fun PrioridadBodyScreen(
                 OutlinedTextField(
                     label = { Text(text = "Días Compromiso") },
                     value = uiState.diasCompromiso?.toString() ?: "",
-                    onValueChange = onDescripcionChange,
+                    onValueChange = onDiasCompromisoChange,
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number)
                 )
@@ -135,13 +136,14 @@ fun PrioridadBodyScreen(
                     OutlinedButton(
                         onClick = {
                             savePrioridad()
+                            nuevaPrioridad()
                         }
                     ) {
                         Icon(
                             imageVector = Icons.Default.Check,
                             contentDescription = null
                         )
-                        Text(text = "Guardar")
+                        Text(text = if (prioridadId > 0) "Editar" else "Registrar")
                     }
                 }
             }
