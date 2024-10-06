@@ -62,7 +62,7 @@ fun PrioridadNavHost(
                 modifier = Modifier.padding(innerpadding)
             ) {
                 composable<Screen.Home> {
-                    Text("Home")
+                    Text("Se encuentra en el inicio")
                 }
 
                 composable<Screen.PrioridadList> {

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -28,7 +29,7 @@ fun ModalDrawerSheet(
     ModalDrawerSheet {
         Box(
             modifier = Modifier
-                .background(Color.Green)
+                .background(Color.LightGray)
                 .fillMaxWidth()
                 .height(150.dp)
         ) {
@@ -58,7 +59,7 @@ fun ModalDrawerSheet(
             selected = false,
             icon = {
                 Icon(
-                    imageVector = Icons.Default.Settings,
+                    imageVector = Icons.Default.Star,
                     contentDescription = null
                 )
             },
