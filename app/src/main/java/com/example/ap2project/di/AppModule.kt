@@ -27,4 +27,9 @@ object AppModule{
     @Singleton
     fun providesPrioridadDao(prioridadDb: PrioridadDb) =
         prioridadDb.prioridadDao()
+
+    @Provides
+    @Singleton
+    fun providesTicketDao(prioridadDb: PrioridadDb) =
+        prioridadDb.ticketDao()
 }
