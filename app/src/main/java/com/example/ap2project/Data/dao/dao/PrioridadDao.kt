@@ -13,8 +13,6 @@ interface PrioridadDao{
     @Upsert
     suspend fun save(prioridad: PrioridadEntity)
 
-    @Update
-    suspend fun update(prioridad: PrioridadEntity)
     @Query(
         """
             SELECT *
