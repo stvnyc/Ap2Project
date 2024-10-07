@@ -18,4 +18,7 @@ class PrioridadRepository @Inject constructor(
 
     fun getPrioridades() =
         prioridadDao.getall()
+
+    suspend fun exist(descripcion: String) =
+        prioridadDao.findByDescription(descripcion)
 }
