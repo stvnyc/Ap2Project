@@ -35,8 +35,10 @@ fun PrioridadScreen(
     prioridadId: Int
 ) {
 
-    LaunchedEffect(prioridadId) {
-        viewModel.selectedPrioridad(prioridadId)
+    LaunchedEffect(key1 = prioridadId) {
+        if (prioridadId > 0) {
+            viewModel.selectedPrioridad(prioridadId)
+        }
     }
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
