@@ -32,9 +32,21 @@ class PrioridadViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(errorMessage = "Todos los campos son requeridos")
                 }
-            } else (
-                    prioridadRepository.save(_uiState.value.toEntity())
-                    )
+                return@launch
+            }
+            if (prioridadRepository.exist(uiState.value.descripcion) != null) {
+                _uiState.update {
+                    it.copy(errorMessage = "Esta Descripción ya existe")
+                }
+                return@launch
+            }
+            else {
+                prioridadRepository.save(_uiState.value.toEntity())
+                _uiState.update {
+                    it.copy(errorMessage = "Agregado correctamente")
+                }
+                nuevo()
+            }
         }
     }
 
@@ -78,8 +90,7 @@ class PrioridadViewModel @Inject constructor(
             it.copy(
                 prioridadId = null,
                 descripcion = "",
-                diasCompromiso = null,
-                errorMessage = null
+                diasCompromiso = null
             )
         }
     }
