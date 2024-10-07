@@ -1,13 +1,12 @@
 package com.example.ap2project.presentation.navigation.ticket
 
-import com.example.ap2project.Data.dao.entities.PrioridadEntity
 import com.example.ap2project.Data.dao.entities.TicketEntity
-import java.sql.Date
+import java.util.Date
 
 data class UiState(
     val ticketId: Int? = null,
     val prioridadId: Int? = null,
-    val date: Date? = null,
+    val date: String? = null,
     val cliente: String = "",
     val asunto: String = "",
     val descripcion: String = "",
