@@ -22,6 +22,8 @@ import androidx.navigation.toRoute
 import com.example.ap2project.presentation.navigation.components.ModalDrawerSheet
 import com.example.ap2project.presentation.navigation.prioridad.PrioridadListScreen
 import com.example.ap2project.presentation.navigation.prioridad.PrioridadScreen
+import com.example.ap2project.presentation.navigation.ticket.TicketListScreen
+import com.example.ap2project.presentation.navigation.ticket.TicketScreen
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,6 +79,19 @@ fun PrioridadNavHost(
                     PrioridadScreen(
                         onGoToPrioridadListScreen = { navHostController.navigateUp() },
                         prioridadId = prioridadId
+                    )
+                }
+                composable<Screen.TicketListScreen>{
+                    TicketListScreen(
+                        createTicket = { navHostController.navigate(Screen.TicketScreen(0)) },
+                        goToTicketScreen = { navHostController.navigate(Screen.TicketScreen(it)) }
+                    )
+                }
+                composable<Screen.TicketScreen>{
+                    val ticketId = it.toRoute<Screen.TicketScreen>().ticketId
+                    TicketScreen(
+                        onNavigateBack = { navHostController.navigateUp() },
+                        ticketId = ticketId
                     )
                 }
             }
