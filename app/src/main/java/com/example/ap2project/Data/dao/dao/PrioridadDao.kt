@@ -1,11 +1,11 @@
-package com.example.ap2project.dao
+package com.example.ap2project.Data.dao.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Update
 import androidx.room.Upsert
-import com.example.ap2project.entities.PrioridadEntity
+import com.example.ap2project.Data.dao.entities.PrioridadEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -13,8 +13,6 @@ interface PrioridadDao{
     @Upsert
     suspend fun save(prioridad: PrioridadEntity)
 
-    @Update
-    suspend fun update(prioridad: PrioridadEntity)
     @Query(
         """
             SELECT *
