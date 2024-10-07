@@ -57,7 +57,6 @@ fun PrioridadListScreen(
         uiState,
         goToPrioridadScreen,
         createPrioridad,
-        onPrioridadSelected = viewModel::selectedPrioridad,
         onDelete = viewModel::delete
     )
 }
@@ -67,7 +66,6 @@ fun PrioridadBodyListScreen(
     uiState: UiState,
     goToPrioridadScreen: (Int) -> Unit,
     createPrioridad: () -> Unit,
-    onPrioridadSelected: (Int) -> Unit,
     onDelete: (PrioridadEntity) -> Unit
 ) {
     Scaffold(
@@ -129,7 +127,7 @@ fun PrioridadBodyListScreen(
                         item = it,
                         onDelete = onDelete
                     ) { prioridad ->
-                        PrioridadRow(prioridad, goToPrioridadScreen, onPrioridadSelected)
+                        PrioridadRow(prioridad, goToPrioridadScreen)
                     }
                 }
             }
@@ -140,8 +138,7 @@ fun PrioridadBodyListScreen(
 @Composable
 private fun PrioridadRow(
     it: PrioridadEntity,
-    goToPrioridadScreen:(Int) -> Unit,
-    onPrioridadSelected: (Int) -> Unit
+    goToPrioridadScreen:(Int) -> Unit
 ){
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -149,7 +146,6 @@ private fun PrioridadRow(
             .padding(14.dp)
             .clickable {
                 goToPrioridadScreen(it.prioridadId ?: 0)
-                onPrioridadSelected(it.prioridadId ?: 0)
             }
     ) {
         Text(
