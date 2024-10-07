@@ -1,4 +1,4 @@
-package com.example.ap2project.entities
+package com.example.ap2project.Data.dao.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
