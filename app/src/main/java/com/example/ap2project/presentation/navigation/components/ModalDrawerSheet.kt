@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Icon
@@ -90,6 +92,42 @@ fun ModalDrawerSheet(
                     drawerState.close()
                 }
                 navHostController.navigate(Screen.TicketListScreen) {
+                    popUpTo(0)
+                }
+            },
+        )
+        NavigationDrawerItem(
+            label = { Text(text = "Sistemas") },
+            selected = false,
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = null
+                )
+            },
+            onClick = {
+                coroutineScope.launch {
+                    drawerState.close()
+                }
+                navHostController.navigate(Screen.SistemaListScreen) {
+                    popUpTo(0)
+                }
+            },
+        )
+        NavigationDrawerItem(
+            label = { Text(text = "Clientes") },
+            selected = false,
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.AccountBox,
+                    contentDescription = null
+                )
+            },
+            onClick = {
+                coroutineScope.launch {
+                    drawerState.close()
+                }
+                navHostController.navigate(Screen.ClienteListScreen) {
                     popUpTo(0)
                 }
             },
