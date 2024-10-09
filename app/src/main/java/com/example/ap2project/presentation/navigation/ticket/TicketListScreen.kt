@@ -22,10 +22,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.ap2project.Data.dao.entities.PrioridadEntity
-import com.example.ap2project.Data.dao.entities.TicketEntity
+import com.example.ap2project.Data.remote.dto.PrioridadDto
+import com.example.ap2project.Data.remote.dto.TicketDto
 import com.example.ap2project.presentation.navigation.prioridad.PrioridadViewModel
 import com.example.ap2project.presentation.navigation.prioridad.SwipeToDeleteContainer
+import kotlin.reflect.KFunction0
 
 @Composable
 fun TicketListScreen(
@@ -35,10 +36,8 @@ fun TicketListScreen(
     createTicket: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val prioridades by viewModelPrioridad.getAll().collectAsStateWithLifecycle(emptyList())
     TicketBodyListScreen(
         uiState = uiState,
-        prioridades = prioridades,
         goToTicketScreen = goToTicketScreen,
         createTicket = createTicket,
         onTicketSelected = viewModel::selectedTicket,
@@ -52,8 +51,7 @@ fun TicketBodyListScreen(
     goToTicketScreen: (Int) -> Unit,
     createTicket: () -> Unit,
     onTicketSelected: (Int) -> Unit,
-    onDelete: (TicketEntity) -> Unit,
-    prioridades: List<PrioridadEntity>
+    onDelete: () -> Unit
 ) {
     Scaffold(
         floatingActionButton = {
@@ -123,13 +121,11 @@ fun TicketBodyListScreen(
                     uiState.tickets,
                     key = { it.prioridadId!! }
                 ) { ticket ->
-                    val prioridadDesc = prioridades.find { it.prioridadId == ticket.prioridadId }
-                        ?.descripcion ?: "La lista se encuentra vacia"
                     SwipeToDeleteContainer(
                         item = ticket,
                         onDelete = onDelete
                     ) {
-                        TicketRow(ticket, prioridadDesc, goToTicketScreen)
+                        TicketRow(ticket, uiState.prioridades, goToTicketScreen)
                     }
                 }
             }
@@ -139,10 +135,11 @@ fun TicketBodyListScreen(
 
 @Composable
 fun TicketRow(
-    ticket: TicketEntity,
-    prioridadDesc: String,
+    ticket: TicketDto,
+    prioridades: List<PrioridadDto>,
     goToTicketScreen: (Int) -> Unit
 ) {
+    val prioridadDesc = prioridades.find { it.prioridadId == ticket.prioridadId }?.descripcion
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -154,14 +151,14 @@ fun TicketRow(
         Text(
             modifier = Modifier
                 .weight(1f),
-            text = ticket.cliente?: "",
+            text = ticket.clienteId.toString(),
             fontSize = 18.sp,
             textAlign = TextAlign.Center
         )
         Text(
             modifier = Modifier
                 .weight(1f),
-            text = prioridadDesc,
+            text = prioridadDesc.toString(),
             fontSize = 18.sp,
             textAlign = TextAlign.Center
         )

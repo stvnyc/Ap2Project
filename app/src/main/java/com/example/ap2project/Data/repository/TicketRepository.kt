@@ -1,17 +1,21 @@
 package com.example.ap2project.Data.repository
 
-import com.example.ap2project.Data.dao.dao.TicketDao
-import com.example.ap2project.Data.dao.entities.TicketEntity
+import com.example.ap2project.Data.remote.dto.TicketDto
+import com.example.ap2project.Data.remote.ticketApi
 import javax.inject.Inject
 
 class TicketRepository @Inject constructor(
-    private val  ticketDao: TicketDao
+    private val  ticketApi: ticketApi
 ) {
-    suspend fun save (ticket: TicketEntity) = ticketDao.save(ticket)
+    suspend fun saveTicket(ticket: TicketDto) =
+        ticketApi.saveTicket(ticket)
 
-    suspend fun getTicket (id: Int) = ticketDao.find(id)
+    suspend fun getTicket(id: Int) =
+        ticketApi.getTicket(id)
 
-    suspend fun delete(ticket: TicketEntity) = ticketDao.delete(ticket)
+    suspend fun deleteTicket(id: Int) =
+        ticketApi.deleteTicket(id)
 
-    fun getTickets() = ticketDao.getAll()
+    suspend fun getTickets() =
+        ticketApi.getAllTicket()
 }
