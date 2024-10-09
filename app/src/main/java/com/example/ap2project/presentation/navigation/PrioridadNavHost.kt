@@ -15,13 +15,19 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.example.ap2project.presentation.navigation.cliente.ClienteListScreen
+import com.example.ap2project.presentation.navigation.cliente.ClienteScreen
 import com.example.ap2project.presentation.navigation.components.ModalDrawerSheet
 import com.example.ap2project.presentation.navigation.prioridad.PrioridadListScreen
 import com.example.ap2project.presentation.navigation.prioridad.PrioridadScreen
+import com.example.ap2project.presentation.navigation.prioridad.PrioridadViewModel
+import com.example.ap2project.presentation.navigation.sistema.SistemaListScreen
+import com.example.ap2project.presentation.navigation.sistema.SistemaScreen
 import com.example.ap2project.presentation.navigation.ticket.TicketListScreen
 import com.example.ap2project.presentation.navigation.ticket.TicketScreen
 import kotlinx.coroutines.launch
@@ -33,6 +39,7 @@ fun PrioridadNavHost(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val viewModel: PrioridadViewModel = hiltViewModel()
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = true,
@@ -67,10 +74,27 @@ fun PrioridadNavHost(
                     Text("Se encuentra en el inicio")
                 }
 
+                composable<Screen.ClienteListScreen> {
+                    ClienteListScreen(
+                        createCliente = { navHostController.navigate(Screen.ClienteScreen(0)) },
+                        goToClienteScreen = { navHostController.navigate(Screen.ClienteScreen(it)) },
+                        onDelete = { viewModel.delete() }
+                    )
+                }
+
+                composable<Screen.ClienteScreen> {
+                    val clienteId = it.toRoute<Screen.ClienteScreen>().clienteId
+                    ClienteScreen(
+                        onNavigateBack = { navHostController.navigateUp() },
+                        clienteId = clienteId
+                    )
+                }
+
                 composable<Screen.PrioridadList> {
                     PrioridadListScreen(
                         createPrioridad = { navHostController.navigate(Screen.Prioridad(0)) },
-                        goToPrioridadScreen = { navHostController.navigate(Screen.Prioridad(it)) }
+                        goToPrioridadScreen = { navHostController.navigate(Screen.Prioridad(it)) },
+                        onDelete = { viewModel.delete() }
                     )
                 }
 
@@ -81,12 +105,30 @@ fun PrioridadNavHost(
                         prioridadId = prioridadId
                     )
                 }
+
+                composable<Screen.SistemaListScreen> {
+                    SistemaListScreen(
+                        createSistema = { navHostController.navigate(Screen.SistemaScreen(0)) },
+                        goToSistemaScreen = { navHostController.navigate(Screen.SistemaScreen(it)) },
+                        onDelete = { viewModel.delete() }
+                    )
+                }
+
+                composable<Screen.SistemaScreen> {
+                    val sistemaId = it.toRoute<Screen.SistemaScreen>().sistemaId
+                    SistemaScreen(
+                        onNavigateBack = { navHostController.navigate(Screen.SistemaListScreen) },
+                        sistemaId = sistemaId
+                    )
+                }
+
                 composable<Screen.TicketListScreen>{
                     TicketListScreen(
                         createTicket = { navHostController.navigate(Screen.TicketScreen(0)) },
                         goToTicketScreen = { navHostController.navigate(Screen.TicketScreen(it)) }
                     )
                 }
+
                 composable<Screen.TicketScreen>{
                     val ticketId = it.toRoute<Screen.TicketScreen>().ticketId
                     TicketScreen(
