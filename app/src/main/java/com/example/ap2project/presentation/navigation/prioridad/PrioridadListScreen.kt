@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -43,21 +42,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.ap2project.Data.dao.entities.PrioridadEntity
+import com.example.ap2project.Data.remote.dto.PrioridadDto
 import kotlinx.coroutines.delay
 
 @Composable
 fun PrioridadListScreen(
     viewModel: PrioridadViewModel = hiltViewModel(),
     goToPrioridadScreen: (Int) -> Unit,
-    createPrioridad: () -> Unit
+    createPrioridad: () -> Unit,
+    onDelete: () -> Unit
 ){
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     PrioridadBodyListScreen(
         uiState,
         goToPrioridadScreen,
         createPrioridad,
-        onDelete = viewModel::delete
+        onDelete = onDelete
     )
 }
 
@@ -66,7 +66,7 @@ fun PrioridadBodyListScreen(
     uiState: UiState,
     goToPrioridadScreen: (Int) -> Unit,
     createPrioridad: () -> Unit,
-    onDelete: (PrioridadEntity) -> Unit
+    onDelete: () -> Unit
 ) {
     Scaffold(
         floatingActionButton = {
@@ -96,21 +96,22 @@ fun PrioridadBodyListScreen(
                 Text(
                     "Id",
                     modifier = Modifier.weight(1f),
-                    fontSize = 20.sp
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center
                 )
                 Text(
                     "Descripción",
                     modifier = Modifier
-                        .weight(1.5f)
-                        .weight(2.5f),
-                    fontSize = 20.sp
+                        .weight(3f),
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center
                 )
                 Text(
                     "Días",
                     modifier = Modifier
-                        .weight(0.5f)
-                        .weight(2.5f),
-                    fontSize = 20.sp
+                        .weight(1f),
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center
                 )
             }
 
@@ -137,7 +138,7 @@ fun PrioridadBodyListScreen(
 
 @Composable
 private fun PrioridadRow(
-    it: PrioridadEntity,
+    it: PrioridadDto,
     goToPrioridadScreen:(Int) -> Unit
 ){
     Row(
@@ -151,17 +152,20 @@ private fun PrioridadRow(
         Text(
             modifier = Modifier.weight(1f),
             text = it.prioridadId.toString(),
-            fontSize = 18.sp
+            fontSize = 18.sp,
+            textAlign = TextAlign.Center
         )
         Text(
             modifier = Modifier.weight(3f),
             text = it.descripcion,
-            fontSize = 18.sp
+            fontSize = 18.sp,
+            textAlign = TextAlign.Center
         )
         Text(
-            modifier = Modifier.weight(0.5f),
+            modifier = Modifier.weight(1f),
             text = it.diasCompromiso.toString(),
-            fontSize = 18.sp
+            fontSize = 18.sp,
+            textAlign = TextAlign.Center
         )
     }
     HorizontalDivider()
@@ -170,7 +174,7 @@ private fun PrioridadRow(
 @Composable
 fun <T> SwipeToDeleteContainer(
     item: T,
-    onDelete: (T) -> Unit,
+    onDelete: () -> Unit,
     animationDuration: Int = 500,
     content: @Composable (T) -> Unit
 ) {
@@ -189,7 +193,7 @@ fun <T> SwipeToDeleteContainer(
     LaunchedEffect(key1 = isRemoved) {
         if (isRemoved) {
             delay(animationDuration.toLong())
-            onDelete(item)
+            onDelete()
         }
     }
     AnimatedVisibility(

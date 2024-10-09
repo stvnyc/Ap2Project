@@ -113,7 +113,7 @@ fun PrioridadBodyScreen(
                 )
 
                 Text(
-                    text = uiState.errorMessage ?: "",
+                    text = uiState.message ?: "",
                     color = MaterialTheme.colorScheme.error,
                     modifier = Modifier
                         .padding(5.dp)
@@ -138,7 +138,7 @@ fun PrioridadBodyScreen(
                     OutlinedButton(
                         onClick = {
                             savePrioridad()
-                            nuevaPrioridad()
+                            onGoToPrioridadListScreen()
                         }
                     ) {
                         Icon(

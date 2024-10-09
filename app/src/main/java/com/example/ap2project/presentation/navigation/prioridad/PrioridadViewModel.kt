@@ -2,10 +2,9 @@ package com.example.ap2project.presentation.navigation.prioridad
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.ap2project.Data.dao.entities.PrioridadEntity
+import com.example.ap2project.Data.remote.dto.PrioridadDto
 import com.example.ap2project.Data.repository.PrioridadRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -30,20 +29,13 @@ class PrioridadViewModel @Inject constructor(
                 _uiState.value.diasCompromiso!! < 1
             ) {
                 _uiState.update {
-                    it.copy(errorMessage = "Todos los campos son requeridos")
+                    it.copy(message = "Todos los campos son requeridos")
                 }
-                return@launch
-            }
-            if (prioridadRepository.exist(uiState.value.descripcion) != null) {
-                _uiState.update {
-                    it.copy(errorMessage = "Esta Descripción ya existe")
-                }
-                return@launch
             }
             else {
-                prioridadRepository.save(_uiState.value.toEntity())
+                prioridadRepository.savePrioridad(_uiState.value.toEntity())
                 _uiState.update {
-                    it.copy(errorMessage = "Agregado correctamente")
+                    it.copy(message = "Agregado correctamente")
                 }
                 nuevo()
             }
@@ -52,21 +44,21 @@ class PrioridadViewModel @Inject constructor(
 
     private fun getPrioridades() {
         viewModelScope.launch {
-            prioridadRepository.getPrioridades().collect { prioridades ->
-                _uiState.update {
-                    it.copy(prioridades = prioridades)
-                }
+            val prioridades = prioridadRepository.getPrioridades()
+            _uiState.update {
+                it.copy(prioridades = prioridades)
             }
         }
     }
 
-    fun getAll(): Flow<List<PrioridadEntity>> {
+    suspend fun getAll(): List<PrioridadDto> {
         return prioridadRepository.getPrioridades()
     }
 
-    fun delete(prioridad: PrioridadEntity) {
+    fun delete() {
         viewModelScope.launch {
-            prioridadRepository.delete(prioridad)
+            prioridadRepository.deletePrioridad(_uiState.value.prioridadId!!)
+            nuevo()
         }
     }
 
@@ -76,9 +68,9 @@ class PrioridadViewModel @Inject constructor(
                 val prioridad = prioridadRepository.getPrioridad(prioridadId)
                 _uiState.update {
                     it.copy(
-                        prioridadId = prioridad?.prioridadId,
-                        descripcion = prioridad?.descripcion ?: "",
-                        diasCompromiso = prioridad?.diasCompromiso
+                        prioridadId = prioridad.prioridadId,
+                        descripcion = prioridad.descripcion ?: "",
+                        diasCompromiso = prioridad.diasCompromiso
                     )
                 }
             }
