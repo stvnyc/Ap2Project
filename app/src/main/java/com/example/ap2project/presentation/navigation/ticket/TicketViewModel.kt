@@ -3,6 +3,9 @@ package com.example.ap2project.presentation.navigation.ticket
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ap2project.Data.dao.entities.TicketEntity
+import com.example.ap2project.Data.repository.ClienteRepository
+import com.example.ap2project.Data.repository.PrioridadRepository
+import com.example.ap2project.Data.repository.SistemaRepository
 import com.example.ap2project.Data.repository.TicketRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,38 +19,81 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TicketViewModel @Inject constructor(
-    private val ticketRepository: TicketRepository
+    private val ticketRepository: TicketRepository,
+    private val clienteRepository: ClienteRepository,
+    private val prioridadRepository: PrioridadRepository,
+    private val sistemaRepository: SistemaRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(UiState())
     val uiState = _uiState.asStateFlow()
 
     init {
         getTickets()
+        getClientes()
+        getSistemas()
+        getPrioridades()
     }
 
     fun save() {
-        if (!isValid()) {
-            return
-        }
         viewModelScope.launch {
-            ticketRepository.save(_uiState.value.toEntity())
-            nuevo()
-        }
-    }
-
-    private fun getTickets() {
-        viewModelScope.launch {
-            ticketRepository.getTickets().collect { tickets ->
+            if (_uiState.value.date == null ||
+                _uiState.value.asunto.isBlank() ||
+                _uiState.value.solicitadoPor.isBlank() ||
+                _uiState.value.asunto.isBlank() ||
+                _uiState.value.descripcion.isBlank()
+            ) {
                 _uiState.update {
-                    it.copy(tickets = tickets)
+                    it.copy(message = "Todos los campos son requeridos")
+                }
+            } else {
+                ticketRepository.saveTicket(_uiState.value.toEntity())
+                _uiState.update {
+                    it.copy(message = "Agregado correctamente")
                 }
             }
         }
     }
 
-    fun delete(ticket: TicketEntity) {
+    private fun getTickets() {
         viewModelScope.launch {
-            ticketRepository.delete(ticket)
+            val tickets = ticketRepository.getTickets()
+            _uiState.update {
+                it.copy(tickets = tickets)
+            }
+        }
+    }
+
+    private fun getClientes() {
+        viewModelScope.launch {
+            val clientes = clienteRepository.getClientes()
+            _uiState.update {
+                it.copy(clientes = clientes)
+            }
+        }
+    }
+
+    private fun getSistemas() {
+        viewModelScope.launch {
+            val sistemas = sistemaRepository.getSistemas()
+            _uiState.update {
+                it.copy(sistemas = sistemas)
+            }
+        }
+    }
+
+    private fun getPrioridades() {
+        viewModelScope.launch {
+            val prioridades = prioridadRepository.getPrioridades()
+            _uiState.update {
+                it.copy(prioridades = prioridades)
+            }
+        }
+    }
+
+    fun delete() {
+        viewModelScope.launch {
+            ticketRepository.deleteTicket(_uiState.value.ticketId!!)
+            nuevo()
         }
     }
 
@@ -57,68 +103,50 @@ class TicketViewModel @Inject constructor(
                 val ticket = ticketRepository.getTicket(ticketId)
                 _uiState.update {
                     it.copy(
-                        ticketId = ticket?.ticketId,
-                        prioridadId = ticket?.prioridadId,
-                        asunto = ticket?.asunto ?: "",
-                        cliente = ticket?.cliente ?: "",
-                        descripcion = ticket?.descripcion ?: "",
-                        date = ticket?.date
+                        ticketId = ticket.ticketId,
+                        date = ticket.date,
+                        clienteId = ticket.clienteId,
+                        sistemaId = ticket.sistemaId,
+                        prioridadId = ticket.prioridadId,
+                        solicitadoPor = ticket.solicitadoPor ?: "",
+                        asunto = ticket.asunto ?: "",
+                        descripcion = ticket.descripcion ?: "",
                     )
                 }
             }
         }
     }
 
-    private fun isValid() : Boolean {
-        if (
-            uiState.value.cliente.isBlank() ||
-            uiState.value.asunto.isBlank() ||
-            uiState.value.descripcion.isBlank() ||
-            uiState.value.date.isNullOrBlank() ||
-            uiState.value.prioridadId == null
-        ) {
-            _uiState.update {
-                it.copy(message = "Todos los campos son requeridos")
-            }
-            return false
-        }
-        return true
-    }
-
     fun nuevo() {
         _uiState.update {
             it.copy(
                 ticketId = null,
+                date = null,
+                clienteId = null,
+                sistemaId = null,
                 prioridadId = null,
+                solicitadoPor = "",
                 asunto = "",
-                descripcion = "",
-                cliente = "",
-                date = null
+                descripcion = ""
             )
         }
     }
 
-    fun onAsuntoChange(asunto: String) {
+    fun onDateChange(date: Date) {
         _uiState.update {
-            it.copy(asunto = asunto)
+            it.copy(date = date, message = null)
         }
     }
 
-    fun onClienteChange(cliente: String) {
+    fun onClienteIdChange(clienteId: Int) {
         _uiState.update {
-            it.copy(cliente = cliente)
+            it.copy(clienteId = clienteId)
         }
     }
 
-    fun onDescripcionChange(descripcion: String) {
+    fun onSistemaIdChange(sistemaId: Int) {
         _uiState.update {
-            it.copy(descripcion = descripcion)
-        }
-    }
-
-    fun onDateChange(date: String) {
-        _uiState.update {
-            it.copy(date = date)
+            it.copy(sistemaId = sistemaId)
         }
     }
 
@@ -128,8 +156,25 @@ class TicketViewModel @Inject constructor(
         }
     }
 
-    fun convertMillisToDate(millis: Long): String {
-        val formatter = SimpleDateFormat("MM/dd/yyyy", Locale.getDefault())
-        return formatter.format(Date(millis))
+    fun onSolicitadoPorChange(solicitadoPor: String) {
+        _uiState.update {
+            it.copy(solicitadoPor = solicitadoPor)
+        }
+    }
+
+    fun onAsuntoChange(asunto: String) {
+        _uiState.update {
+            it.copy(asunto = asunto)
+        }
+    }
+
+    fun onDescripcionChange(descripcion: String) {
+        _uiState.update {
+            it.copy(descripcion = descripcion)
+        }
+    }
+
+    fun convertMillisToDate(millis: Long): Date {
+        return Date(millis)
     }
 }

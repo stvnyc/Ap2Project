@@ -1,24 +1,21 @@
 package com.example.ap2project.Data.repository
 
-import com.example.ap2project.Data.dao.dao.PrioridadDao
-import com.example.ap2project.Data.dao.entities.PrioridadEntity
+import com.example.ap2project.Data.remote.dto.PrioridadDto
+import com.example.ap2project.Data.remote.prioridadApi
 import javax.inject.Inject
 
 class PrioridadRepository @Inject constructor(
-    private val prioridadDao: PrioridadDao
+    private val prioridadApi: prioridadApi
 ) {
-    suspend fun save(prioridad: PrioridadEntity) =
-        prioridadDao.save(prioridad)
+    suspend fun savePrioridad(prioridad: PrioridadDto) =
+        prioridadApi.savePrioridad(prioridad)
 
     suspend fun getPrioridad(id: Int) =
-        prioridadDao.find(id)
+        prioridadApi.getPrioridad(id)
 
-    suspend fun delete(prioridad: PrioridadEntity) =
-        prioridadDao.delete(prioridad)
+    suspend fun deletePrioridad(id: Int) =
+        prioridadApi.deletePrioridad(id)
 
-    fun getPrioridades() =
-        prioridadDao.getall()
-
-    suspend fun exist(descripcion: String) =
-        prioridadDao.findByDescription(descripcion)
+    suspend fun getPrioridades() =
+        prioridadApi.getAllPrioridad()
 }

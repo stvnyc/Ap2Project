@@ -45,17 +45,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.ap2project.Data.dao.entities.PrioridadEntity
+import com.example.ap2project.Data.remote.dto.PrioridadDto
 import com.example.ap2project.presentation.navigation.prioridad.PrioridadViewModel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
+import java.util.Date
 
 @Composable
 fun TicketScreen(
     viewModelTicket: TicketViewModel = hiltViewModel(),
-    viewModelPrioridad: PrioridadViewModel = hiltViewModel(),
     onNavigateBack: () -> Unit,
-    ticketId : Int
+    ticketId: Int
 ) {
     LaunchedEffect(key1 = ticketId) {
         if (ticketId > 0) {
@@ -64,19 +63,19 @@ fun TicketScreen(
     }
 
     val uiStateTicket by viewModelTicket.uiState.collectAsStateWithLifecycle()
-    val prioridadList = viewModelPrioridad.getAll()
+
     TicketBodyScreen(
         uiState = uiStateTicket,
         onNavigateBack = onNavigateBack,
         onDescripcionChange = viewModelTicket::onDescripcionChange,
         onAsuntoChange = viewModelTicket::onAsuntoChange,
+        onClienteIdChange = viewModelTicket::onClienteIdChange,
+        onSistemaIdChange = viewModelTicket::onSistemaIdChange,
         onPrioridadIdChange = viewModelTicket::onPrioridadIdChange,
         saveTicket = viewModelTicket::save,
         nuevoTicket = viewModelTicket::nuevo,
-        list = prioridadList,
         onFechaChange = viewModelTicket::onDateChange,
-        convertMillisToDate = viewModelTicket::convertMillisToDate,
-        onClienteChange = viewModelTicket::onClienteChange
+        convertMillisToDate = viewModelTicket::convertMillisToDate
     )
 }
 
@@ -86,31 +85,27 @@ fun TicketBodyScreen(
     onNavigateBack: () -> Unit,
     onDescripcionChange: (String) -> Unit,
     onAsuntoChange: (String) -> Unit,
-    onClienteChange: (String) -> Unit,
+    onClienteIdChange: (Int) -> Unit,
+    onSistemaIdChange: (Int) -> Unit,
     onPrioridadIdChange: (Int) -> Unit,
+    convertMillisToDate: (Long) -> Date,
     saveTicket: () -> Unit,
     nuevoTicket: () -> Unit,
-    onFechaChange: (String) -> Unit,
-    convertMillisToDate: (Long) -> String,
-    list: Flow<List<PrioridadEntity>>
+    onFechaChange: (Date) -> Unit
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
+
     LaunchedEffect(datePickerState.selectedDateMillis) {
         datePickerState.selectedDateMillis?.let { selectedDateMillis ->
             val selectedDate = convertMillisToDate(selectedDateMillis)
             onFechaChange(selectedDate)
-            delay(300)
-            showDatePicker = false
         }
     }
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = onNavigateBack,
-                modifier = Modifier.padding(16.dp)
-            ) {
+            FloatingActionButton(onClick = onNavigateBack) {
                 Icon(Icons.Outlined.ArrowBack, contentDescription = "Volver")
             }
         }
@@ -133,104 +128,80 @@ fun TicketBodyScreen(
                 )
             }
 
-            Column(
+            InputSelect(
+                label = "Clientes",
+                options = uiState.clientes,
+                onOptionSelected = onClienteIdChange,
+                getId = { cliente -> cliente.clienteId!! },
+                getLabel = { cliente -> cliente.nombre!! }
+            )
+            InputSelect(
+                label = "Sistemas",
+                options = uiState.sistemas,
+                onOptionSelected = onSistemaIdChange,
+                getId = { sistema -> sistema.sistemaId!! },
+                getLabel = { sistema -> sistema.sistemaNombre!! }
+            )
+            InputSelect(
+                label = "Prioridades",
+                options = uiState.prioridades,
+                onOptionSelected = onPrioridadIdChange,
+                getId = { prioridad -> prioridad.prioridadId!! },
+                getLabel = { prioridad -> prioridad.descripcion!! }
+            )
+
+            OutlinedTextField(
+                label = { Text(text = "Asunto") },
+                value = uiState.asunto,
+                onValueChange = onAsuntoChange,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = uiState.descripcion,
+                onValueChange = onDescripcionChange,
+                label = { Text("Descripción") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = uiState.date?.toString() ?: "",
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Fecha") },
+                trailingIcon = {
+                    IconButton(onClick = { showDatePicker = !showDatePicker }) {
+                        Icon(Icons.Default.DateRange, contentDescription = null)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth().height(64.dp)
+            )
+
+            if (showDatePicker) {
+                DatePicker(state = datePickerState)
+            }
+
+            Text(
+                text = uiState.message ?: "",
+                color = MaterialTheme.colorScheme.error,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
+                    .padding(5.dp)
+                    .align(Alignment.CenterHorizontally),
+                style = MaterialTheme.typography.titleMedium
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
             ) {
-                InputSelect(
-                    label = "Prioridades",
-                    options = list,
-                    onOptionSelected = onPrioridadIdChange
-                )
-                OutlinedTextField(
-                    label = { Text(text = "Cliente") },
-                    value = uiState.cliente,
-                    onValueChange = onClienteChange,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                OutlinedTextField(
-                    label = { Text(text = "Asunto") },
-                    value = uiState.asunto,
-                    onValueChange = onAsuntoChange,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                OutlinedTextField(
-                    value = uiState.date?: "",
-                    onValueChange = {},
-                    readOnly = true,
-                    label = { Text("Fecha") },
-                    trailingIcon = {
-                        IconButton(onClick = {showDatePicker = !showDatePicker}) {
-                            Icon(
-                                imageVector = Icons.Default.DateRange,
-                                contentDescription = null
-                            )
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(64.dp)
-                )
-                if (showDatePicker) {
-                    Popup(
-                        onDismissRequest = { showDatePicker = false },
-                        alignment = Alignment.TopStart
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .offset(y = 50.dp)
-                                .padding(16.dp)
-                        ) {
-                            DatePicker(
-                                state = datePickerState,
-                                showModeToggle = false
-                            )
-                        }
-                    }
+                OutlinedButton(onClick = nuevoTicket) {
+                    Icon(Icons.Default.AddCircle, contentDescription = null)
+                    Text(text = "Nuevo")
                 }
-                OutlinedTextField(
-                    label = { Text(text = "Descripción") },
-                    value = uiState.descripcion,
-                    onValueChange = onDescripcionChange,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                Text(
-                    text = uiState.message ?: "",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier
-                        .padding(5.dp)
-                        .align(Alignment.CenterHorizontally),
-                    style = MaterialTheme.typography.titleMedium
-                )
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    OutlinedButton(
-                        onClick = nuevoTicket
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AddCircle,
-                            contentDescription = null
-                        )
-                        Text(text = "Nuevo")
-                    }
-
-                    OutlinedButton(
-                        onClick = {
-                            saveTicket()
-                            nuevoTicket()
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Check,
-                            contentDescription = null
-                        )
-                        Text(text = "Guardar")
-                    }
+                OutlinedButton(onClick = saveTicket) {
+                    Icon(Icons.Default.Check, contentDescription = null)
+                    Text(text = "Guardar")
                 }
             }
         }
@@ -239,45 +210,43 @@ fun TicketBodyScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InputSelect(
-    options: Flow<List<PrioridadEntity>>,
-    label: String = "Seleccionar prioridad",
-    onOptionSelected: (Int) -> Unit
+fun <T> InputSelect(
+    label: String,
+    options: List<T>,
+    onOptionSelected: (Int) -> Unit,
+    getLabel: (T) -> String,
+    getId: (T) -> Int
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedOption by remember { mutableStateOf("") }
-    val prioridadesList by options.collectAsState(initial = emptyList())
+
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded }
     ) {
-        TextField(
+        OutlinedTextField(
             value = selectedOption,
             onValueChange = {},
-            label = { Text(label) },
             readOnly = true,
-            modifier = Modifier
-                .fillMaxWidth()
-                .menuAnchor(),
-            trailingIcon = {
-                TrailingIcon(expanded = expanded)
-            },
-            colors = ExposedDropdownMenuDefaults.textFieldColors()
+            label = { Text(label) },
+            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+            modifier = Modifier.fillMaxWidth()
         )
         ExposedDropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false }
         ) {
-            prioridadesList.forEach { option ->
+            options.forEach { option ->
                 DropdownMenuItem(
-                    text = { Text(option.descripcion) },
+                    text = { Text(getLabel(option)) },
                     onClick = {
-                        selectedOption = option.descripcion
+                        selectedOption = getLabel(option)
+                        onOptionSelected(getId(option))
                         expanded = false
-                        onOptionSelected(option.prioridadId?: 0)
                     }
                 )
             }
         }
+
     }
 }

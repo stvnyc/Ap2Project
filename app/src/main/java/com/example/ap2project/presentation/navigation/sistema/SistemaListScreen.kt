@@ -1,4 +1,4 @@
-package com.example.ap2project.presentation.navigation.ticket
+package com.example.ap2project.presentation.navigation.sistema
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -22,41 +23,38 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.ap2project.Data.remote.dto.PrioridadDto
-import com.example.ap2project.Data.remote.dto.TicketDto
-import com.example.ap2project.presentation.navigation.prioridad.PrioridadViewModel
+import com.example.ap2project.Data.remote.dto.SistemaDto
 import com.example.ap2project.presentation.navigation.prioridad.SwipeToDeleteContainer
-import kotlin.reflect.KFunction0
 
 @Composable
-fun TicketListScreen(
-    viewModel: TicketViewModel = hiltViewModel(),
-    viewModelPrioridad: PrioridadViewModel = hiltViewModel(),
-    goToTicketScreen: (Int) -> Unit,
-    createTicket: () -> Unit
+fun SistemaListScreen(
+    viewModel: SistemaViewModel = hiltViewModel(),
+    goToSistemaScreen: (Int) -> Unit,
+    createSistema: () -> Unit,
+    onDelete: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    TicketBodyListScreen(
+    SistemaBodyListScreen(
         uiState = uiState,
-        goToTicketScreen = goToTicketScreen,
-        createTicket = createTicket,
-        onTicketSelected = viewModel::selectedTicket,
-        onDelete = viewModel::delete
+        goToSistemaScreen = goToSistemaScreen,
+        createSistema = createSistema,
+        onSistemaSelected = viewModel::selectedSistema,
+        onDelete = onDelete
     )
 }
 
 @Composable
-fun TicketBodyListScreen(
+fun SistemaBodyListScreen(
     uiState: UiState,
-    goToTicketScreen: (Int) -> Unit,
-    createTicket: () -> Unit,
-    onTicketSelected: (Int) -> Unit,
+    goToSistemaScreen: (Int) -> Unit,
+    createSistema: () -> Unit,
+    onSistemaSelected: (Int) -> Unit,
     onDelete: () -> Unit
 ) {
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = createTicket,
+                onClick = createSistema,
                 modifier = Modifier.padding(16.dp)
             ) {
                 Icon(Icons.Filled.Add, contentDescription = null)
@@ -69,63 +67,47 @@ fun TicketBodyListScreen(
                 .padding(innerPadding)
         ) {
             Text(
-                text = "Lista de Tickets",
+                text = "Lista de Sistemas",
                 fontSize = 30.sp,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(24.dp),
+                    .padding(24.dp)
             )
             Row(
                 modifier = Modifier
                     .padding(15.dp)
             ) {
                 Text(
-                    "Cliente",
+                    "Id",
                     modifier = Modifier
-                        .weight(1f)
-                        .align(Alignment.CenterVertically),
-                    fontSize = 14.sp,
+                        .weight(1f),
+                    fontSize = 20.sp,
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    "Prioridad",
+                    "Nombre",
                     modifier = Modifier
                         .weight(1f)
                         .align(Alignment.CenterVertically),
-                    fontSize = 14.sp,
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    "Asunto",
-                    modifier = Modifier
-                        .weight(1f)
-                        .align(Alignment.CenterVertically),
-                    fontSize = 14.sp,
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    "Fecha",
-                    modifier = Modifier
-                        .weight(1f)
-                        .align(Alignment.CenterVertically),
-                    fontSize = 14.sp,
+                    fontSize = 20.sp,
                     textAlign = TextAlign.Center
                 )
             }
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 15.dp)
             ) {
                 items(
-                    uiState.tickets,
-                    key = { it.prioridadId!! }
-                ) { ticket ->
+                    uiState.sistemas,
+                    key = { it.sistemaId!! }
+                ) {
                     SwipeToDeleteContainer(
-                        item = ticket,
+                        item = it,
                         onDelete = onDelete
-                    ) {
-                        TicketRow(ticket, uiState.prioridades, goToTicketScreen)
+                    ) { sistema ->
+                        SistemaRow(sistema, goToSistemaScreen)
                     }
                 }
             }
@@ -134,47 +116,32 @@ fun TicketBodyListScreen(
 }
 
 @Composable
-fun TicketRow(
-    ticket: TicketDto,
-    prioridades: List<PrioridadDto>,
-    goToTicketScreen: (Int) -> Unit
+fun SistemaRow(
+    it: SistemaDto,
+    goToSistemaScreen: (Int) -> Unit
 ) {
-    val prioridadDesc = prioridades.find { it.prioridadId == ticket.prioridadId }?.descripcion
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
+            .padding(14.dp)
             .clickable {
-                goToTicketScreen(ticket.ticketId?: 0)
+                goToSistemaScreen(it.sistemaId?: 0)
             }
-            .padding(vertical = 14.dp)
     ) {
         Text(
             modifier = Modifier
                 .weight(1f),
-            text = ticket.clienteId.toString(),
+            text = it.sistemaId.toString(),
             fontSize = 18.sp,
             textAlign = TextAlign.Center
         )
         Text(
             modifier = Modifier
                 .weight(1f),
-            text = prioridadDesc.toString(),
-            fontSize = 18.sp,
-            textAlign = TextAlign.Center
-        )
-        Text(
-            modifier = Modifier
-                .weight(1f),
-            text = ticket.asunto.toString(),
-            fontSize = 18.sp,
-            textAlign = TextAlign.Center
-        )
-        Text(
-            modifier = Modifier
-                .weight(1f),
-            text = ticket.date.toString(),
+            text = it.sistemaNombre,
             fontSize = 18.sp,
             textAlign = TextAlign.Center
         )
     }
+    HorizontalDivider()
 }
