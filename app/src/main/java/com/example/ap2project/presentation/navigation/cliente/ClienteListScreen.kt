@@ -30,15 +30,14 @@ import com.example.ap2project.presentation.navigation.prioridad.SwipeToDeleteCon
 fun ClienteListScreen(
     viewModel: ClienteViewModel = hiltViewModel(),
     goToClienteScreen: (Int) -> Unit,
-    createCliente: () -> Unit,
-    onDelete: () -> Unit
+    createCliente: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     ClienteBodyListScreen(
         uiState,
         goToClienteScreen,
         createCliente,
-        onDelete = onDelete
+        onDelete = viewModel::delete
     )
 }
 

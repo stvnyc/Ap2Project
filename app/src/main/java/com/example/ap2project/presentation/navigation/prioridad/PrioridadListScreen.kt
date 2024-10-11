@@ -49,15 +49,14 @@ import kotlinx.coroutines.delay
 fun PrioridadListScreen(
     viewModel: PrioridadViewModel = hiltViewModel(),
     goToPrioridadScreen: (Int) -> Unit,
-    createPrioridad: () -> Unit,
-    onDelete: () -> Unit
+    createPrioridad: () -> Unit
 ){
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     PrioridadBodyListScreen(
         uiState,
         goToPrioridadScreen,
         createPrioridad,
-        onDelete = onDelete
+        onDelete = viewModel::delete
     )
 }
 

@@ -30,8 +30,7 @@ import com.example.ap2project.presentation.navigation.prioridad.SwipeToDeleteCon
 fun SistemaListScreen(
     viewModel: SistemaViewModel = hiltViewModel(),
     goToSistemaScreen: (Int) -> Unit,
-    createSistema: () -> Unit,
-    onDelete: () -> Unit
+    createSistema: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     SistemaBodyListScreen(
@@ -39,7 +38,7 @@ fun SistemaListScreen(
         goToSistemaScreen = goToSistemaScreen,
         createSistema = createSistema,
         onSistemaSelected = viewModel::selectedSistema,
-        onDelete = onDelete
+        onDelete = viewModel::delete
     )
 }
 

@@ -77,8 +77,7 @@ fun PrioridadNavHost(
                 composable<Screen.ClienteListScreen> {
                     ClienteListScreen(
                         createCliente = { navHostController.navigate(Screen.ClienteScreen(0)) },
-                        goToClienteScreen = { navHostController.navigate(Screen.ClienteScreen(it)) },
-                        onDelete = { viewModel.delete() }
+                        goToClienteScreen = { navHostController.navigate(Screen.ClienteScreen(it)) }
                     )
                 }
 
@@ -93,8 +92,7 @@ fun PrioridadNavHost(
                 composable<Screen.PrioridadList> {
                     PrioridadListScreen(
                         createPrioridad = { navHostController.navigate(Screen.Prioridad(0)) },
-                        goToPrioridadScreen = { navHostController.navigate(Screen.Prioridad(it)) },
-                        onDelete = { viewModel.delete() }
+                        goToPrioridadScreen = { navHostController.navigate(Screen.Prioridad(it)) }
                     )
                 }
 
@@ -109,8 +107,7 @@ fun PrioridadNavHost(
                 composable<Screen.SistemaListScreen> {
                     SistemaListScreen(
                         createSistema = { navHostController.navigate(Screen.SistemaScreen(0)) },
-                        goToSistemaScreen = { navHostController.navigate(Screen.SistemaScreen(it)) },
-                        onDelete = { viewModel.delete() }
+                        goToSistemaScreen = { navHostController.navigate(Screen.SistemaScreen(it)) }
                     )
                 }
 
