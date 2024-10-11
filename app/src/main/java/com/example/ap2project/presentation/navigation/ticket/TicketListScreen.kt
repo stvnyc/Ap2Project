@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.ap2project.Data.remote.dto.ClienteDto
 import com.example.ap2project.Data.remote.dto.PrioridadDto
 import com.example.ap2project.Data.remote.dto.TicketDto
 import com.example.ap2project.presentation.navigation.prioridad.PrioridadViewModel
@@ -80,6 +81,14 @@ fun TicketBodyListScreen(
                     .padding(15.dp)
             ) {
                 Text(
+                    "Id",
+                    modifier = Modifier
+                        .weight(1f)
+                        .align(Alignment.CenterVertically),
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Center
+                )
+                Text(
                     "Cliente",
                     modifier = Modifier
                         .weight(1f)
@@ -125,7 +134,7 @@ fun TicketBodyListScreen(
                         item = ticket,
                         onDelete = onDelete
                     ) {
-                        TicketRow(ticket, uiState.prioridades, goToTicketScreen)
+                        TicketRow(ticket, uiState.prioridades, uiState.clientes, goToTicketScreen)
                     }
                 }
             }
@@ -137,8 +146,10 @@ fun TicketBodyListScreen(
 fun TicketRow(
     ticket: TicketDto,
     prioridades: List<PrioridadDto>,
+    clientes: List<ClienteDto>,
     goToTicketScreen: (Int) -> Unit
 ) {
+    val clienteNombre = clientes.find { it.clienteId == ticket.clienteId }?.nombre
     val prioridadDesc = prioridades.find { it.prioridadId == ticket.prioridadId }?.descripcion
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -151,7 +162,14 @@ fun TicketRow(
         Text(
             modifier = Modifier
                 .weight(1f),
-            text = ticket.clienteId.toString(),
+            text = ticket.ticketId.toString(),
+            fontSize = 18.sp,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            modifier = Modifier
+                .weight(1f),
+            text = clienteNombre.toString(),
             fontSize = 18.sp,
             textAlign = TextAlign.Center
         )
@@ -165,7 +183,7 @@ fun TicketRow(
         Text(
             modifier = Modifier
                 .weight(1f),
-            text = ticket.asunto.toString(),
+            text = ticket.asunto,
             fontSize = 18.sp,
             textAlign = TextAlign.Center
         )
