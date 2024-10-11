@@ -119,7 +119,7 @@ fun TicketBodyListScreen(
             ) {
                 items(
                     uiState.tickets,
-                    key = { it.prioridadId!! }
+                    key = { ticket -> ticket.ticketId!! }
                 ) { ticket ->
                     SwipeToDeleteContainer(
                         item = ticket,

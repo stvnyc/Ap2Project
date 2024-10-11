@@ -36,16 +36,42 @@ class TicketViewModel @Inject constructor(
 
     fun save() {
         viewModelScope.launch {
-            if (_uiState.value.date == null ||
-                _uiState.value.asunto.isBlank() ||
-                _uiState.value.solicitadoPor.isBlank() ||
-                _uiState.value.asunto.isBlank() ||
-                _uiState.value.descripcion.isBlank()
-            ) {
+            val errorMessages = mutableListOf<String>()
+
+            if (_uiState.value.clienteId == null) {
+                errorMessages.add("Debe seleccionar un cliente.")
+            }
+
+            if (_uiState.value.sistemaId == null) {
+                errorMessages.add("Debe seleccionar un sistema.")
+            }
+
+            if (_uiState.value.prioridadId == null) {
+                errorMessages.add("Debe seleccionar una prioridad.")
+            }
+
+            if (_uiState.value.solicitadoPor.isBlank()) {
+                errorMessages.add("El campo 'Solicitado por' no puede estar vacío.")
+            }
+
+            if (_uiState.value.asunto.isBlank()) {
+                errorMessages.add("El campo 'Asunto' no puede estar vacío.")
+            }
+
+            if (_uiState.value.descripcion.isBlank()) {
+                errorMessages.add("El campo 'Descripción' no puede estar vacío.")
+            }
+
+            if (_uiState.value.date == null) {
+                errorMessages.add("Debe seleccionar una fecha.")
+            }
+
+            if (errorMessages.isNotEmpty()) {
                 _uiState.update {
-                    it.copy(message = "Todos los campos son requeridos")
+                    it.copy(message = errorMessages.joinToString("\n"))
                 }
             } else {
+                // Guardar el ticket si todas las validaciones pasan
                 ticketRepository.saveTicket(_uiState.value.toEntity())
                 _uiState.update {
                     it.copy(message = "Agregado correctamente")
@@ -66,6 +92,7 @@ class TicketViewModel @Inject constructor(
     private fun getClientes() {
         viewModelScope.launch {
             val clientes = clienteRepository.getClientes()
+            println("Clientes recuperados: $clientes")  // Este mensaje aparecerá en Logcat
             _uiState.update {
                 it.copy(clientes = clientes)
             }
