@@ -92,7 +92,6 @@ class TicketViewModel @Inject constructor(
     private fun getClientes() {
         viewModelScope.launch {
             val clientes = clienteRepository.getClientes()
-            println("Clientes recuperados: $clientes")  // Este mensaje aparecerá en Logcat
             _uiState.update {
                 it.copy(clientes = clientes)
             }
@@ -148,7 +147,7 @@ class TicketViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 ticketId = null,
-                date = null,
+                date = Date(),
                 clienteId = null,
                 sistemaId = null,
                 prioridadId = null,
@@ -161,7 +160,7 @@ class TicketViewModel @Inject constructor(
 
     fun onDateChange(date: Date) {
         _uiState.update {
-            it.copy(date = date, message = null)
+            it.copy(date = date)
         }
     }
 

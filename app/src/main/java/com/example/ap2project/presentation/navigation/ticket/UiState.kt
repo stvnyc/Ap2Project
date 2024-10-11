@@ -8,7 +8,7 @@ import java.util.Date
 
 data class UiState(
     val ticketId: Int? = null,
-    val date: Date? = null,
+    val date: Date = Date(),
     val clienteId: Int? = null,
     val sistemaId: Int? = null,
     val prioridadId: Int? = null,
@@ -16,6 +16,7 @@ data class UiState(
     val asunto: String = "",
     val descripcion: String = "",
     val message: String? = null,
+    val errorFecha: String? = null,
     val tickets: List<TicketDto> = emptyList(),
     val clientes: List<ClienteDto> = emptyList(),
     val sistemas: List<SistemaDto> = emptyList(),

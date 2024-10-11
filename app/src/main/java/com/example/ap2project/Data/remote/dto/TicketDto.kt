@@ -4,7 +4,7 @@ import java.util.Date
 
 data class TicketDto (
     val ticketId: Int?,
-    val date: Date?,
+    val date: Date = Date(),
     val clienteId: Int?,
     val sistemaId: Int?,
     val prioridadId: Int?,
